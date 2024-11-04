@@ -8,19 +8,26 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("Harshit@gmail.com");
   const [password, setPassword] = useState("Harshit@123");
+  const [error,setError] = useState("")
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
   const handleLogin = async() => {
-    const res  = await axios.post(BASEURL+'login',{
-      email,password
-    },
-    {
-      withCredentials:true
+    try{
+      const res  = await axios.post(BASEURL+'/login',{
+        email,password
+      },
+      {
+        withCredentials:true
+      }
+    );
+      dispatch(addUser(res.data));
+      navigate('/')
     }
-  );
-    dispatch(addUser(res.data));
-    navigate('/')
+    catch(err){
+      console.error("Error in login : ",err);
+      setError(err?.response?.data || " Something went wrong.")
+    }
   }
 
 
@@ -54,6 +61,7 @@ const Login = () => {
               className="input input-bordered w-full max-w-xs"
             />
           </label>
+          <p className=" text-red-500">{error}</p>
           <div className="card-actions justify-center">
             <button onClick={handleLogin} className="btn btn-primary">Login</button>
           </div>
