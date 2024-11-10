@@ -6,37 +6,87 @@ import { BASEURL } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("Harshit@gmail.com");
   const [password, setPassword] = useState("Harshit@123");
-  const [error,setError] = useState("")
+  const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handleLogin = async() => {
-    try{
-      const res  = await axios.post(BASEURL+'/login',{
-        email,password
-      },
-      {
-        withCredentials:true
-      }
-    );
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(
+        BASEURL + "/login",
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
       dispatch(addUser(res.data));
-      navigate('/')
+      navigate("/");
+    } catch (err) {
+      console.error("Error in login : ", err);
+      setError(err?.response?.data || " Something went wrong.");
     }
-    catch(err){
-      console.error("Error in login : ",err);
-      setError(err?.response?.data || " Something went wrong.")
-    }
-  }
+  };
 
-
+  const handleSignUp = async () => {
+    try {
+      const res = await axios.post(
+        BASEURL + "/signup",
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res?.data?.data));
+      navigate("/profile")
+    } catch (err) {}
+  };
 
   return (
     <div className="flex justify-center my-10">
       <div className="card  bg-base-300 w-96 shadow-xl">
         <div className="card-body">
-          <h2 className="card-title mx-auto">Login</h2>
+          <h2 className="card-title mx-auto">
+            {isLogin ? "Login" : "Sign up"}
+          </h2>
+          {!isLogin && (
+            <>
+              <label className="form-control w-full my-2 max-w-xs">
+                <div className="label">
+                  <span className="label-text">First Name:</span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="input input-bordered w-full max-w-xs"
+                />
+              </label>
+              <label className="form-control w-full my-2 max-w-xs">
+                <div className="label">
+                  <span className="label-text">Last Name:</span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Type here"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="input input-bordered w-full max-w-xs"
+                />
+              </label>
+            </>
+          )}
           <label className="form-control w-full my-2 max-w-xs">
             <div className="label">
               <span className="label-text">Email</span>
@@ -63,8 +113,16 @@ const Login = () => {
           </label>
           <p className=" text-red-500">{error}</p>
           <div className="card-actions justify-center">
-            <button onClick={handleLogin} className="btn btn-primary">Login</button>
+            <button onClick={isLogin?handleLogin:handleSignUp} className="btn btn-primary">
+              {isLogin ? "Login" : "Sign Up"}
+            </button>
           </div>
+          <p
+            onClick={() => setIsLogin((prev) => !prev)}
+            className="cursor-pointer text-center"
+          >
+            {isLogin ? "New User? Sign up" : "Already Registered? Login"}
+          </p>
         </div>
       </div>
     </div>
