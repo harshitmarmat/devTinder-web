@@ -51,7 +51,7 @@ const Connection = () => {
   
   if(!connections) return null;
 
-  if(connections.length===0) return <h1>No Connections.</h1>
+  if(connections.length===0) return <h1 className="text-center my-10">No Connections.</h1>
 
   return (
     <div className="flex flex-col items-center">
