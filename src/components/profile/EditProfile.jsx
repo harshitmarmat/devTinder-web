@@ -140,3 +140,4 @@ const EditProfile = ({ userDetail }) => {
 };
 
 export default EditProfile;
+ 
