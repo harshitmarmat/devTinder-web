@@ -12,7 +12,6 @@ const ConnectionCard = ({ user, index, changeActive,active }) => {
   return (
     <div
       onClick={() => {
-        console.log(index);
         changeActive(index);
       }}
       className={`cursor-pointer card card-compact ${active ?"bg-base-300":"bg-base-200"} w-96 shadow-xl my-2 p-4`}
@@ -58,14 +57,10 @@ const Connection = () => {
   }, []);
 
   const getMessage = async () => {
-    console.log("hi");
-
     try {
       const res = await axios.get(BASEURL + "/chat/" + connections[active]?.conversationThread, {
         withCredentials: true,
       });
-      console.log(res);
-
       dispatch(addMessage(res.data.chats));
     } catch (err) {}
   };
@@ -89,7 +84,6 @@ const Connection = () => {
       },{
         withCredentials: true
       });
-      console.log(res);
       dispatch(pushMessage(res.data.data))
     } catch (err) {}
   };
@@ -103,7 +97,6 @@ const Connection = () => {
             <ConnectionCard
               changeActive={(num) => {
                 setActive(num);
-                console.log(num);
               }}
               key={connection?.userData?._id}
               index={i}

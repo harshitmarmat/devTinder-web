@@ -17,7 +17,6 @@ const EditProfile = ({ userDetail }) => {
   const [err, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const saveProfile = async () => {
     try {

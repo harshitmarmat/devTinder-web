@@ -13,9 +13,7 @@ const messageSlice = createSlice({
         },
         pushMessage : (state,actions) => {
             const newArray = [...state];
-            newArray.push(actions.payload)
-            console.log(newArray);
-            
+            newArray.push(actions.payload)            
             return newArray
         }
     }
