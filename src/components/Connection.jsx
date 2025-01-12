@@ -5,8 +5,9 @@ import { BASEURL } from "../utils/constants";
 import { addConnection } from "../utils/connectionSlice";
 import ChatInbox from "./chat/ChatInbox";
 import { addMessage, pushMessage } from "../utils/messageSlice";
+import useSocket from "../hooks/useSocket";
 
-const ConnectionCard = ({ user, index, changeActive,active }) => {
+const ConnectionCard = ({ user, index, changeActive, active }) => {
   const { firstName, lastName, photo, about, age, gender } = user;
 
   return (
@@ -14,7 +15,9 @@ const ConnectionCard = ({ user, index, changeActive,active }) => {
       onClick={() => {
         changeActive(index);
       }}
-      className={`cursor-pointer card card-compact ${active ?"bg-base-300":"bg-base-200"} w-96 shadow-xl my-2 p-4`}
+      className={`cursor-pointer card card-compact ${
+        active ? "bg-base-300" : "bg-base-200"
+      } w-96 shadow-xl my-2 p-4`}
     >
       <div className="flex items-center gap-3">
         <div className="avatar online">
@@ -35,11 +38,12 @@ const ConnectionCard = ({ user, index, changeActive,active }) => {
 };
 
 const Connection = () => {
+  const { sendData } =  useSocket();
   const dispatch = useDispatch();
   const connections = useSelector((state) => state.connections);
   const user = useSelector((state) => state.user);
   const message = useSelector((state) => state.message);
-  const [text,setText] = useState("")
+  const [text, setText] = useState("");
 
   const [active, setActive] = useState(null);
   const getConnections = async () => {
@@ -58,9 +62,12 @@ const Connection = () => {
 
   const getMessage = async () => {
     try {
-      const res = await axios.get(BASEURL + "/chat/" + connections[active]?.conversationThread, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        BASEURL + "/chat/" + connections[active]?.conversationThread,
+        {
+          withCredentials: true,
+        }
+      );
       dispatch(addMessage(res.data.chats));
     } catch (err) {}
   };
@@ -74,18 +81,21 @@ const Connection = () => {
   if (connections.length === 0)
     return <h1 className="text-center my-10">No Connections.</h1>;
 
-  console.log(connections);
-
   const sendMessage = async () => {
-    try {
-      const res = await axios.post(BASEURL + "/send/message/" + connections[active]?.conversationThread, {
-        content: text,
-        toUserId: connections[active]?.userData?._id,
-      },{
-        withCredentials: true
-      });
-      dispatch(pushMessage(res.data.data))
-    } catch (err) {}
+    sendData({
+      conversationThread: connections[active]?.conversationThread,
+      content: text,
+      toUserId: connections[active]?.userData?._id,
+    });
+    // try {
+    //   const res = await axios.post(BASEURL + "/send/message/" + connections[active]?.conversationThread, {
+    //     content: text,
+    //     toUserId: connections[active]?.userData?._id,
+    //   },{
+    //     withCredentials: true
+    //   });
+    //   dispatch(pushMessage(res.data.data))
+    // } catch (err) {}
   };
 
   return (
@@ -101,7 +111,7 @@ const Connection = () => {
               key={connection?.userData?._id}
               index={i}
               user={connection.userData}
-              active={active===i}
+              active={active === i}
             />
           ))}
         </div>
@@ -114,7 +124,7 @@ const Connection = () => {
                 placeholder="Type here"
                 className="input w-full input-bordered "
                 value={text}
-                onChange={(e)=>setText(e.target.value)}
+                onChange={(e) => setText(e.target.value)}
               />
               <button
                 onClick={sendMessage}

@@ -1,8 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addUser } from "../../utils/userSlice";
-import { BASEURL } from "../../utils/constants";
+import { authUser  } from "../../utils/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -15,41 +14,29 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    try {
-      const res = await axios.post(
-        BASEURL + "/login",
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      dispatch(addUser(res.data));
-      navigate("/");
-    } catch (err) {
-      console.error("Error in login : ", err);
-      setError(err?.response?.data || " Something went wrong.");
-    }
+  const handleLogin = async () => { 
+    dispatch(
+      authUser({
+        type: "login",
+        user: { email, password },
+      })
+    );
+    navigate("/");
   };
 
-  const handleSignUp = async () => {
-    try {
-      const res = await axios.post(
-        BASEURL + "/signup",
-        {
+  const handleSignUp = () => {
+    dispatch(
+      authUser({
+        type: "signup",
+        user: {
           firstName,
           lastName,
           email,
           password,
         },
-        { withCredentials: true }
-      );
-      dispatch(addUser(res?.data?.data));
-      navigate("/profile")
-    } catch (err) {}
+      })
+    );
+    navigate("/profile");
   };
 
   return (
@@ -113,7 +100,10 @@ const Login = () => {
           </label>
           <p className=" text-red-500">{error}</p>
           <div className="card-actions justify-center">
-            <button onClick={isLogin?handleLogin:handleSignUp} className="btn btn-primary">
+            <button
+              onClick={isLogin ? handleLogin : handleSignUp}
+              className="btn btn-primary"
+            >
               {isLogin ? "Login" : "Sign Up"}
             </button>
           </div>
