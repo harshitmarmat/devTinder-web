@@ -73,12 +73,9 @@ const userSlice = createSlice({
         return null;
       })
       .addCase(userProfile.fulfilled, (state,action)=> {
-        console.log(action);
         return action.payload
       })
       .addCase(editProfile.fulfilled,(state,action) => {
-        console.log(action);
-        
         return action.payload.data
       })
   },

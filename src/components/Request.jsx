@@ -1,8 +1,6 @@
-import axios from "axios";
 import React, { useEffect } from "react";
-import { BASEURL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addRequest, removeRequest } from "../utils/requestSlice";
+import {requestAction, requestHandlerThunk } from "../utils/requestSlice";
 
 const RequestCard = ({ user, requestHanlder,_id }) => {
   const { firstName, lastName, photo, about, age, gender } = user;
@@ -34,14 +32,8 @@ const RequestCard = ({ user, requestHanlder,_id }) => {
 const Request = () => {
   const dispatch = useDispatch();
   const requests = useSelector(state=>state.requests)
-  const getRequest = async () => {
-    try {
-      const res = await axios.get(BASEURL + "/user/requests/received", {
-        withCredentials: true,
-      });
-      console.log(res);
-      dispatch(addRequest(res?.data?.data));
-    } catch (err) {}
+  const getRequest =  () => {
+    dispatch(requestHandlerThunk())
   };
 
   useEffect(() => {
@@ -49,13 +41,8 @@ const Request = () => {
   }, []);
 
 
-  const requestHandler = async(status,_id) => {
-    try{
-      const res = await axios.post(BASEURL + "/request/review/" +status +"/" + _id,{},{withCredentials :true})
-      dispatch(removeRequest(_id))
-    } catch (err) {
-
-    }
+  const requestHandler = (status,_id) => {
+      dispatch(requestAction({status,_id}))
   }
   
   if(!requests) return null;

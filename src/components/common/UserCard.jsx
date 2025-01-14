@@ -1,21 +1,14 @@
-import axios from "axios";
 import React from "react";
-import { BASEURL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
-import { removeFeed } from "../../utils/feedSlice";
+import { feedApprove } from "../../utils/feedSlice";
 
 const UserCard = ({ user }) => {
   const { firstName, lastName, age, about, photo, gender,_id} = user;
   const dispatch = useDispatch();
   const feedHandler = async(status) => {
-    try {
-      const res = await axios.post(
-        BASEURL + "/request/send/" + status +"/" + _id,
-        {},
-        { withCredentials: true }
-      );
-      dispatch(removeFeed(_id))
-    } catch (err) {}
+    dispatch(feedApprove({
+      status, _id
+    }))
   };
 
  

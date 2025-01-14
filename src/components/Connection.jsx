@@ -1,10 +1,8 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BASEURL } from "../utils/constants";
-import { addConnection } from "../utils/connectionSlice";
+import {  connectionHandler } from "../utils/connectionSlice";
 import ChatInbox from "./chat/ChatInbox";
-import { addMessage, pushMessage } from "../utils/messageSlice";
+import { fetchMessage } from "../utils/messageSlice";
 import useSocket from "../hooks/useSocket";
 
 const ConnectionCard = ({ user, index, changeActive, active }) => {
@@ -44,38 +42,24 @@ const Connection = () => {
   const user = useSelector((state) => state.user);
   const message = useSelector((state) => state.message);
   const [text, setText] = useState("");
-
   const [active, setActive] = useState(null);
-  const getConnections = async () => {
-    try {
-      const res = await axios.get(BASEURL + "/user/requests/connection", {
-        withCredentials: true,
-      });
-      setActive(0);
-      dispatch(addConnection(res?.data));
-    } catch (err) {}
+  const getConnections = () => {
+    dispatch(connectionHandler())
+    setActive(0);
   };
 
   useEffect(() => {
     getConnections();
   }, []);
 
-  const getMessage = async () => {
-    try {
-      const res = await axios.get(
-        BASEURL + "/chat/" + connections[active]?.conversationThread,
-        {
-          withCredentials: true,
-        }
-      );
-      dispatch(addMessage(res.data.chats));
-    } catch (err) {}
-  };
 
   useEffect(() => {
-    getMessage();
-  }, [active]);
-
+    if(connections) {
+      console.log(connections[active]);
+      dispatch(fetchMessage(connections[active]?.conversationThread));
+    }    
+  }, [active,connections]);
+  
   if (!connections) return null;
 
   if (connections.length === 0)
