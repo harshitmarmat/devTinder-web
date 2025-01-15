@@ -71,15 +71,6 @@ const Connection = () => {
       content: text,
       toUserId: connections[active]?.userData?._id,
     });
-    // try {
-    //   const res = await axios.post(BASEURL + "/send/message/" + connections[active]?.conversationThread, {
-    //     content: text,
-    //     toUserId: connections[active]?.userData?._id,
-    //   },{
-    //     withCredentials: true
-    //   });
-    //   dispatch(pushMessage(res.data.data))
-    // } catch (err) {}
   };
 
   return (

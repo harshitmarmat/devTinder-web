@@ -1,17 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BASEURL } from "./constants";
-import axios from "axios";
+import axiosInstance from "../config/axiosInstance";
 
 export const fetchMessage = createAsyncThunk(
   "/message/fetchMessage",
   async (thread, { rejectWithValue }) => {
     try {
-      const res = await axios.get(
-        BASEURL + "/chat/" + thread,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axiosInstance.get("/chat/" + thread);
       return res.data.chats
     } catch (err) {
         console.log("Error in fetchMessage thunk :",err);

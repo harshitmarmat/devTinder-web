@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { authUser  } from "../../utils/userSlice";
@@ -14,14 +13,13 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async () => { 
+  const handleLogin = () => { 
     dispatch(
       authUser({
         type: "login",
         user: { email, password },
       })
-    );
-    navigate("/");
+    ).unwrap().then(()=>navigate('/'))
   };
 
   const handleSignUp = () => {

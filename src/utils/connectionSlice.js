@@ -1,14 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { BASEURL } from "./constants";
+import axiosInstance from "../config/axiosInstance"
 
 export const connectionHandler = createAsyncThunk(
   "/connections/add",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(BASEURL + "/user/requests/connection", {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.get("/user/requests/connection");
 
       return res.data
     } catch (err) {

@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BASEURL } from "./constants";
-import axios from "axios";
+import axiosInstance from "../config/axiosInstance";
 
 export const authUser = createAsyncThunk(
   "/user/auth",
@@ -8,13 +7,9 @@ export const authUser = createAsyncThunk(
     try {
       let res;
       if (data.type === "signup") {
-        res = await axios.post(BASEURL + "/signup", data.user, {
-          withCredentials: true,
-        });
+        res = await axiosInstance.post("/signup", data.user);
       } else {
-        res = await axios.post(BASEURL + "/login", data.user, {
-          withCredentials: true,
-        });
+        res = await axiosInstance.post("/login", data.user);
       }
       return res.data;
     } catch (err) {
@@ -27,9 +22,7 @@ export const userProfile = createAsyncThunk(
   "/user/profile", 
   async (_ , {rejectWithValue}) => {
     try {
-      const res = await axios.get(BASEURL + "/profile/view",{
-        withCredentials : true
-      })
+      const res = await axiosInstance.get("/profile/view")
       return res.data
     }
     catch (err) {
@@ -42,10 +35,9 @@ export const editProfile = createAsyncThunk(
   "/user/edit",
   async (data, {rejectWithValue }) => {
     try {
-      const res = await axios.patch(
-        BASEURL + "/profile/edit",
-        data,
-        { withCredentials: true }
+      const res = await axiosInstance.patch(
+        "/profile/edit",
+        data
       );
       return res.data
     }
@@ -55,18 +47,26 @@ export const editProfile = createAsyncThunk(
   }
 )
 
+export const logoutHandlerThunk = createAsyncThunk(
+  "/user/logout",
+  async (_, {rejectWithValue }) => {
+    try {
+      await axiosInstance.post('/logout',{});
+      return;
+    }
+    catch(err) {
+      rejectWithValue(err.message)
+    }
+  }
+)
+
 const userSlice = createSlice({
   name: "user",
   initialState: null,
-  reducers: {
-    removeUser(state, action) {
-      return null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(authUser.fulfilled, (state, action) => {
-        
         return action.payload;
       })
       .addCase(authUser.rejected, (state, action) => {
@@ -78,9 +78,14 @@ const userSlice = createSlice({
       .addCase(editProfile.fulfilled,(state,action) => {
         return action.payload.data
       })
+      .addCase(logoutHandlerThunk.fulfilled,(state,action)=>{
+        return null
+      })
+      .addCase(logoutHandlerThunk.rejected,(state,action)=> {
+        return 
+      })
   },
 });
 
-export const { removeUser } = userSlice.actions;
 
 export default userSlice.reducer;

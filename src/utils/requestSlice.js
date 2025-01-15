@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { BASEURL } from "./constants";
+import axiosInstance from "../config/axiosInstance";
 
 
 
@@ -8,9 +7,7 @@ export const requestHandlerThunk = createAsyncThunk(
   "/requests/handle",
   async (_, {rejectWithValue}) => {
     try {
-      const res = await axios.get(BASEURL + "/user/requests/received", {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.get("/user/requests/received");
       return res?.data?.data
     }
     catch(err) {
@@ -23,7 +20,7 @@ export const requestAction = createAsyncThunk(
   "/requests/action",
   async ({status,_id} , {rejectWithValue})=> {
     try {
-      const res = await axios.post(BASEURL + "/request/review/" +status +"/" + _id,{},{withCredentials :true});
+      const res = await axiosInstance.post("/request/review/" +status +"/" + _id,{});
       return _id
     }
     catch (err){

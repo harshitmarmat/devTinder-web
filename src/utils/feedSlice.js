@@ -1,14 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { BASEURL } from "./constants";
+import axiosInstance from "../config/axiosInstance";
 
 export const feedFetch = createAsyncThunk(
   "/feed/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(BASEURL + "/user/feed", {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.get("/user/feed");
       return res.data;
     } catch (err) {
       rejectWithValue(err.message);
@@ -20,11 +17,8 @@ export const feedApprove = createAsyncThunk(
   "/feed/request",
   async (data, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        BASEURL + "/request/send/" + data.status + "/" + data._id,
-        {},
-        { withCredentials: true }
-      );
+      const res = await axiosInstance.post("/request/send/" + data.status + "/" + data._id,
+        {});
       return res.data;
     } catch (err) {
       rejectWithValue(err.message);

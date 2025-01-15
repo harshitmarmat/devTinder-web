@@ -10,13 +10,11 @@ const Body = () => {
   const navigate = useNavigate()
 
   const fetchProfile = async() => {
-    try {
-      const response = await dispatch(userProfile()).unwrap();
+    try { 
+      await dispatch(userProfile()).unwrap();
     } catch (err) {
-      if(err.status===401) {
-        navigate('/login')
-      }
-      console.error("Error in getting profile data.")      
+      console.error("Error in getting profile data.",err.message)      
+      navigate('/login')
     }
   }
 

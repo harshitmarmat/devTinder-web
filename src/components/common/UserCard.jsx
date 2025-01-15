@@ -5,7 +5,7 @@ import { feedApprove } from "../../utils/feedSlice";
 const UserCard = ({ user }) => {
   const { firstName, lastName, age, about, photo, gender,_id} = user;
   const dispatch = useDispatch();
-  const feedHandler = async(status) => {
+  const feedHandler = (status) => {
     dispatch(feedApprove({
       status, _id
     }))
